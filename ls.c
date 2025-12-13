@@ -45,14 +45,12 @@ int cmp(const void *a, const void *b){
 
 //funkcija za racunanje vrednosti funkcije cilja
 
-double upgradedSolutionValue(bool *solution, double *fixedCost, int m, int level1, int level2, struct cena **c){
+double upgradedSolutionValue(bool *solution, bool *used, double *fixedCost, int m, int level1, int level2, struct cena **c){
   register double value = 0.0;
   double minValue;
   int i, j, jUsed, kUsed;
   int level = level1 + level2;
   int n = level1 * level2;
-  bool* used = (bool*) malloc((unsigned long) level * sizeof(bool));
-  assert(used != NULL);
   for(j = 0; j < level; j++){
     used[j] = false;
   }
@@ -98,7 +96,10 @@ bool ispravno(bool *solution, int level1, int level2){
       break;
     }
   }
-  return a && b;
+  if(a && b){
+    return true;
+  }
+  return false;
 }
 
 //funkcija koja inicijalizuje resenje
@@ -151,7 +152,7 @@ void restore(bool *solution, int j, int k, int level1){
 
 //algoritam lokalne pretrage
 
-struct resenje localSearch(bool *solution, double *fixedCost, int m, int level1, int level2, struct cena **c){
+struct resenje localSearch(bool *solution, bool* used, double *fixedCost, int m, int level1, int level2, struct cena **c){
   struct resenje currentValue;
   struct resenje bestValue;
   int iteration = 0;
@@ -160,7 +161,7 @@ struct resenje localSearch(bool *solution, double *fixedCost, int m, int level1,
   struct resenje newValue;
   newValue.value = 0.0;
   double startTime = clock();
-  currentValue.value = upgradedSolutionValue(solution, fixedCost, m, level1, level2, c);
+  currentValue.value = upgradedSolutionValue(solution, used, fixedCost, m, level1, level2, c);
   currentValue.vreme = startTime;
   bestValue.value = currentValue.value;
 
@@ -170,7 +171,7 @@ struct resenje localSearch(bool *solution, double *fixedCost, int m, int level1,
     if((a[0] == -1 && a[1] == -1) || a[0] == -1 || a[1] == -1){
       continue;
     }
-    newValue.value = upgradedSolutionValue(solution, fixedCost, m, level1, level2, c);
+    newValue.value = upgradedSolutionValue(solution, used, fixedCost, m, level1, level2, c);
     t = clock();
     newValue.vreme = (t - startTime) / CLOCKS_PER_SEC;
     if(newValue.value < currentValue.value){
@@ -289,13 +290,16 @@ int main(int argc, char** argv){
 
   //inicijalizacija resenja
 
-  bool *solution = (bool*) malloc((unsigned long) level * sizeof(bool));
+  bool *solution = (bool*) malloc((unsigned long) level * sizeof(bool));x
   assert(solution != NULL);
+  bool *used = (bool*) malloc((unsigned long) level * sizeof(bool));
+  assert(used != NULL);
+  
   initialize(solution, level1, level2);
 
   //resavanje problema
 
-  struct resenje solutionValue = localSearch(solution, fixedCost, nbCustomers, level1, level2, c);
+  struct resenje solutionValue = localSearch(solution, used, fixedCost, nbCustomers, level1, level2, c);
   double endTime = clock();
   double vreme = (endTime - startTime) / CLOCKS_PER_SEC;
 
