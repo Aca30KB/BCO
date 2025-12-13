@@ -19,9 +19,9 @@ To ensure the lowest possible execution latency and memory overhead, all dynamic
 ### 2. $O(1)$ Greedy Assignment (Offline Optimization)
 The objective function calculation (assigning customers to the cheapest open two-level route) is the most computationally expensive part of the solver.
 
-* [cite_start]**Offline Sorting:** For every customer $i$, the entire cost matrix $c_{ij_1 j_2}$ is pre-processed and sorted ascendingly into a single linear array **before** the optimization algorithm begins[cite: 161].
-* [cite_start]**Optimized Lookup:** During the fitness evaluation (`upgradedSolutionValue`), the solver iterates through this pre-sorted array and stops at the very **first pair $(j_1, j_2)$** where both facilities are marked as open in the current solution[cite: 162].
-* [cite_start]**Result:** This transforms the assignment subproblem from a potentially complex search into a near **$O(1)$** lookup for the minimum cost, drastically reducing the total execution time[cite: 162].
+* **Offline Sorting:** For every customer $i$, the entire cost matrix $c_{ij_1 j_2}$ is pre-processed and sorted ascendingly into a single linear array **before** the optimization algorithm begins[cite: 161].
+* **Optimized Lookup:** During the fitness evaluation (`upgradedSolutionValue`), the solver iterates through this pre-sorted array and stops at the very **first pair $(j_1, j_2)$** where both facilities are marked as open in the current solution[cite: 162].
+* **Result:** This transforms the assignment subproblem from a potentially complex search into a near **$O(1)$** lookup for the minimum cost, drastically reducing the total execution time[cite: 162].
 
 ### 3. Algorithm & Logic
 * **Hybrid Metaheuristic:** The BCO search is hybridized with a Local Search (LS) mechanism to improve the quality of solutions (escaping local optima) found by the **Recruiter** bees.
